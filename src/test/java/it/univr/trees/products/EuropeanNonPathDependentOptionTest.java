@@ -28,15 +28,68 @@ public class EuropeanNonPathDependentOptionTest {
 
 		double strike = 100;
 		
+		
+		//f(x)= 1 if x > K, 0 otherwise
 		/*
 		 * We want to plot the expected value of the final payoff of an option written on our approximating models when we
 		 * increase the number of times. In the same plot, we want to show also the analyic price of the option,
 		 * as a benchmark.
 		 */
 		DoubleUnaryOperator payoffFunction = (x) -> (x - strike > 0 ? 1.0 : 0.0);//European digital option
+		//DoubleUnaryOperator payoffFunctionCall = (x) -> Math.max(x-strike, 0);
+		//DoubleUnaryOperator payoffFunctionCallAlternative = (x) -> (x - strike > 0 ? x - strike : 0.0);
+		
+		//European digital option
+		
+		
+		//some prints for experimenting further the results with Leisen Reimer
+		LeisenReimerModel leisenReimerModel = new LeisenReimerModel(spotPrice, riskFreeRate, volatility, 
+				lastTime, 20, strike);
+		
 		
 		EuropeanNonPathDependentOption ourOption = new EuropeanNonPathDependentOption(lastTime, payoffFunction);
-
+		
+		
+		double valueForLeisenReimer = ourOption.getValue(leisenReimerModel);
+		
+		System.out.println("Value of the option for Leisen-Reimer: " + valueForLeisenReimer);
+		
+		
+		//some prints for experimenting further the results with Cox Ross Rubinstein
+		CoxRossRubinsteinModel coxRossRubinsteinFirst = new CoxRossRubinsteinModel(spotPrice, riskFreeRate,  volatility, 
+				 lastTime,  10);
+		
+		CoxRossRubinsteinModel coxRossRubinsteinSecond = new CoxRossRubinsteinModel(spotPrice, riskFreeRate,  volatility, 
+				 lastTime,  11);
+		
+		CoxRossRubinsteinModel coxRossRubinsteinThird = new CoxRossRubinsteinModel(spotPrice, riskFreeRate,  volatility, 
+				 lastTime,  12);
+		
+		CoxRossRubinsteinModel coxRossRubinsteinFourth = new CoxRossRubinsteinModel(spotPrice, riskFreeRate,  volatility, 
+				 lastTime,  13);
+		
+		double valueForCRRFirst = ourOption.getValue(coxRossRubinsteinFirst);
+		double valueForCRRSecond = ourOption.getValue(coxRossRubinsteinSecond);
+		double valueForCRRThird = ourOption.getValue(coxRossRubinsteinThird);
+		double valueForCRRFourth = ourOption.getValue(coxRossRubinsteinFourth);
+		
+		System.out.println("Value of the option for CRR with 10 times: " + valueForCRRFirst);
+		System.out.println("Value of the option for CRR with 11 times: " + valueForCRRSecond);
+		System.out.println("Value of the option for CRR with 12 times: " + valueForCRRThird);
+		System.out.println("Value of the option for CRR with 13 times: " + valueForCRRFourth);
+		
+		System.out.println();
+		
+		double[] possibleRealizationsForCoxRossRubinsteinFirst =
+				coxRossRubinsteinFirst.getValuesAtGivenTimeIndex(9);
+		System.out.println("Possible values for CRR with 10 times:");
+		System.out.println(Arrays.toString(possibleRealizationsForCoxRossRubinsteinFirst));
+		
+		double[] possibleRealizationsForCoxRossRubinsteinSecond 
+		 = coxRossRubinsteinSecond.getValuesAtGivenTimeIndex(10);
+		System.out.println("Possible values for CRR with 11 times:");
+		System.out.println(Arrays.toString(possibleRealizationsForCoxRossRubinsteinSecond));
+		
 		/*
 		 * We use the Plot2D class of finmath-lib-plot-extensions. In order to do that, we have to define the
 		 * functions to plot as objects of type DoubleUnaryOperator.
@@ -78,7 +131,7 @@ public class EuropeanNonPathDependentOptionTest {
 		int minNumberOfTimes = 10;
 		
 		
-		final Plot2D plotCRR = new Plot2D(minNumberOfTimes, maxNumberOfTimes, maxNumberOfTimes-minNumberOfTimes+1, Arrays.asList(
+		final Plot2D plotCRR = new Plot2D(minNumberOfTimes, maxNumberOfTimes, (maxNumberOfTimes-minNumberOfTimes)/2+1, Arrays.asList(
 				new Named<DoubleUnaryOperator>("Cox Ross Rubinstein", numberOfTimesToPriceCoxRossRubinsteinModel),
 				new Named<DoubleUnaryOperator>("Black-Scholes", dummyFunctionBlackScholesPrice)));
 		
@@ -88,7 +141,7 @@ public class EuropeanNonPathDependentOptionTest {
 		plotCRR.show();
 		
 		
-		final Plot2D plotJR = new Plot2D(minNumberOfTimes, maxNumberOfTimes, maxNumberOfTimes-minNumberOfTimes+1, Arrays.asList(
+		final Plot2D plotJR = new Plot2D(minNumberOfTimes+1, maxNumberOfTimes+1, (maxNumberOfTimes-minNumberOfTimes)/2+1, Arrays.asList(
 				new Named<DoubleUnaryOperator>("Jarrow Rudd", numberOfTimesToPriceJarrowRuddModel),
 				new Named<DoubleUnaryOperator>("Black-Scholes", dummyFunctionBlackScholesPrice)));
 		plotJR.setXAxisLabel("Number of discretized times");

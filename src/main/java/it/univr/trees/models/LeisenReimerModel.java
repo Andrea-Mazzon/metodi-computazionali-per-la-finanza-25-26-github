@@ -30,7 +30,7 @@ public class LeisenReimerModel extends BinomialModel {
 			double lastTime, double timeStep, double strike) {
 		super(spotPrice, riskFreeRate, volatility, lastTime, timeStep);
 		this.strike = strike;
-		maturity = lastTime;
+		this.maturity = lastTime;
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class LeisenReimerModel extends BinomialModel {
 			double lastTime, int numberOfTimes, double strike) {
 		super(spotPrice, riskFreeRate, volatility, lastTime, numberOfTimes);
 		this.strike = strike;
-		maturity = lastTime;
+		this.maturity = lastTime;
 	}
 
 	/**

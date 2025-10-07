@@ -141,6 +141,7 @@ public class UsefulMethodsArrays {
 	public static double getScalarProductTwoArrays(double[] firstArray, double[] secondArray) {
 		double[] productOfArrays = multArrays(firstArray, secondArray);
 		return getSum(productOfArrays);
+		//firstArray[0]*secondArray[0]+firstArray[1]*secondArray[1]+...+firstArray[n]*secondArray[n]
 	}
 	
 	

@@ -54,11 +54,12 @@ public abstract class BinomialModel {
 	private double[][] values;
 	
 	
+	
 	/*
 	 * Below, we have an example of overloaded constructors: we two constructors, the first one accepts as
 	 * last argument a double indicating the time step, and computed the number of times accordingly, whereas
 	 * the second one does the inverse. In this way, the user can decide what to give.
-	 */
+	 */ 
 	
 	public BinomialModel(double initialPrice, double riskFreeRate, double volatility, 
 			double lastTime, double timeStep) {
@@ -95,8 +96,12 @@ public abstract class BinomialModel {
 		 * sigma and Delta_n=T/n. In cases when they depend on more parameters, these parameters will be given in the
 		 * constructors of those classes, see for example LeisenReimerModel.
 		 */
-		upFactor = computeUpDownFactors(riskFreeRate, volatility, timeStep)[0];
-		downFactor = computeUpDownFactors(riskFreeRate, volatility, timeStep)[1];
+		
+		double[] upAndDownFactors = computeUpDownFactors(riskFreeRate, volatility, timeStep);
+		
+		upFactor = upAndDownFactors[0];
+		downFactor = upAndDownFactors[1];
+		
 		riskFreeFactor = Math.exp(riskFreeRate*timeStep)-1;//it is rho_n
 		
 		
@@ -104,7 +109,6 @@ public abstract class BinomialModel {
 		riskNeutralProbabilityUp = (1 + riskFreeFactor - downFactor) / (upFactor - downFactor);
 		riskNeutralProbabilityDown = 1 - riskNeutralProbabilityUp;
 	}
-	
 	
 	protected abstract double[] computeUpDownFactors(double riskFreeRate, double volatility, double timeStep);
 
@@ -116,6 +120,14 @@ public abstract class BinomialModel {
 	 * are zero, because at time t_k the binomial model can only take k+1 values. Note that this could cause
 	 * confusion if somebody is directly aware of this method.
 	 */
+	
+	// (S_0 0 0 ... 0)
+	// (S_0*u S_0*d 0 ... 0) 
+	//....
+	// (S_0u^i S_0u^(i-1)d .... S_0ud^(i-1) S_0d^i .0 ..0 )
+	//..
+	//(S_0u^n S_0u^(n-1)d .... S_0ud^(n-1) S_0d^n)
+	
 	private void generateValues() {
 		values = new double[numberOfTimes][numberOfTimes];
 		values[0][0] = initialPrice;
@@ -206,6 +218,10 @@ public abstract class BinomialModel {
 	 * 		   The value in position i is B(0)*u^(Math.round(time/timeStep)-i)*d^i
 	 */
 	public double[] getValuesAtGivenTime(double time) {
+		
+		//if somebody gives t:
+		//find t_k from our time discretuzation that better approximates t
+		//give k
 		int timeIndex = (int) Math.round(time/timeStep);
 
 		//we return directly what we get from getValuesAtGivenTimeIndex(timeIndex)
