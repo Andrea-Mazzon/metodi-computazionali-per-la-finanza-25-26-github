@@ -23,8 +23,8 @@ public class EuropeanKnockOutBarrierOptionTest {
 	public static void main(String[] strings) throws Exception {
 
 		double spotPrice = 2;
-		double riskFreeRate = 0.2;
-		double volatility = 0.7;
+		double riskFreeRate = 0.02;
+		double volatility = 0.2;
 		double lastTime = 3;
 
 		double strike = 2;
@@ -101,5 +101,54 @@ public class EuropeanKnockOutBarrierOptionTest {
 		plotLR.setYAxisLabel("Price");
 		plotLR.setIsLegendVisible(true);
 		plotLR.show();
+		
+		
+		//prints for checking the formula for the best nujmber of time steps
+
+		System.out.println("Analytic value: " + OurAnalyticFormulas.blackScholesDownAndOut(spotPrice, riskFreeRate, volatility, lastTime, strike, lowerBarrier));
+		int numberOfConsecutiveDownsToReachBarrier = 4;
+		double fOfM = numberOfConsecutiveDownsToReachBarrier*numberOfConsecutiveDownsToReachBarrier*volatility*volatility*lastTime/Math.pow(Math.log(lowerBarrier/spotPrice),2);
+		int idealNumberOfTimesSteps = (int) fOfM;
+		int idealNumberOfTimes = idealNumberOfTimesSteps + 1;
+		System.out.println("Ideal number of times for m=" + numberOfConsecutiveDownsToReachBarrier +": " + idealNumberOfTimes);
+		CoxRossRubinsteinModel ourFirstUnderlying = new CoxRossRubinsteinModel(spotPrice, riskFreeRate, volatility, lastTime, idealNumberOfTimes);
+		System.out.println("Our first value: " + ourOption.getValue(ourFirstUnderlying));
+		CoxRossRubinsteinModel ourSecondUnderlying = new CoxRossRubinsteinModel(spotPrice, riskFreeRate, volatility, lastTime, idealNumberOfTimes + 1);
+		System.out.println("Our second value: " + ourOption.getValue(ourSecondUnderlying));
+		
+		
+		//Now, plots with double barrier. Note that we don't have an analytic formula!
+		
+		double upperBarrier = 3.3;
+		
+		double newVolatility = 0.2;
+		double newRiskFreeRate = 0.02;
+		
+		EuropeanKnockOutBarrierOption ourOptionWithDoubleBarrier = new EuropeanKnockOutBarrierOption(lastTime, payoffFunction, lowerBarrier, upperBarrier);
+		
+
+		DoubleUnaryOperator numberOfTimesToPriceCoxRossRubinsteinModelWithDoubleBarrier = (numberOfTimesForFunction) -> {
+			CoxRossRubinsteinModel ourModelForFunction = new CoxRossRubinsteinModel(spotPrice, newRiskFreeRate, newVolatility, lastTime, (int) numberOfTimesForFunction);		
+			return ourOptionWithDoubleBarrier.getValue(ourModelForFunction);};
+			
+		DoubleUnaryOperator numberOfTimesToPriceJarrowRuddModelWithDoubleBarrier = (numberOfTimesForFunction) -> {
+			JarrowRuddModel ourModelForFunction = new JarrowRuddModel(spotPrice, newRiskFreeRate, newVolatility, lastTime, (int) numberOfTimesForFunction);		
+				return ourOptionWithDoubleBarrier.getValue(ourModelForFunction);};
+				
+		DoubleUnaryOperator numberOfTimesToPriceLeisenReimerModelWithDoubleBarrier = (numberOfTimesForFunction) -> {
+			LeisenReimerModel ourModelForFunction = new LeisenReimerModel(spotPrice, newRiskFreeRate, newVolatility, lastTime, (int) numberOfTimesForFunction, strike);		
+				return ourOptionWithDoubleBarrier.getValue(ourModelForFunction);};
+			
+		final Plot2D plotCRRWithDoubleBarrier = new Plot2D(minNumberOfTimes, maxNumberOfTimes, maxNumberOfTimes-minNumberOfTimes+1, Arrays.asList(
+					new Named<DoubleUnaryOperator>("Cox Ross Rubinstein", numberOfTimesToPriceCoxRossRubinsteinModelWithDoubleBarrier),
+					new Named<DoubleUnaryOperator>("Jarrow Rudd", numberOfTimesToPriceJarrowRuddModelWithDoubleBarrier),
+					new Named<DoubleUnaryOperator>("Leisen Reimer", numberOfTimesToPriceLeisenReimerModelWithDoubleBarrier)));
+		
+		plotCRRWithDoubleBarrier.setXAxisLabel("Number of discretized times");
+		plotCRRWithDoubleBarrier.setYAxisLabel("Price for double barrier");
+		plotCRRWithDoubleBarrier.setIsLegendVisible(true);
+		plotCRRWithDoubleBarrier.show();
+		
+		
 	}
 }

@@ -31,9 +31,10 @@ import it.univr.usefulmethodsarrays.UsefulMethodsArrays;
  */
 public abstract class BinomialModel {
 	
-	//parameters describing the model
+	//parameters describing the model, given in the constructor
 	
-	//this is given in the constructor
+	private double volatility;
+	private double riskFreeRate;
 	private double initialPrice;
 	
 	//the following parameters are not given in the constructor, but computed from volatility and risk free rate r
@@ -54,7 +55,6 @@ public abstract class BinomialModel {
 	private double[][] values;
 	
 	
-	
 	/*
 	 * Below, we have an example of overloaded constructors: we two constructors, the first one accepts as
 	 * last argument a double indicating the time step, and computed the number of times accordingly, whereas
@@ -64,23 +64,13 @@ public abstract class BinomialModel {
 	public BinomialModel(double initialPrice, double riskFreeRate, double volatility, 
 			double lastTime, double timeStep) {
 		this.initialPrice = initialPrice;
-		this.timeStep = timeStep;
+		this.volatility = volatility;
+		this.riskFreeRate = riskFreeRate;
 		
+		this.timeStep = timeStep;
 		//computed from timeStep
 		numberOfTimes = (int) (Math.round(lastTime/timeStep) + 1);//the number of times comes from the time step
-		/*
-		 * Important: u_n and d_n are computed in a specific way according to the specific model. The specific model
-		 * will be represented by a class inheriting from this one. In general, we assume they can be function of r,
-		 * sigma and Delta_n=T/n. In cases when they depend on more parameters, these parameters will be given in the
-		 * constructors of those classes, see for example LeisenReimerModel.
-		 */
-		upFactor = computeUpDownFactors(riskFreeRate, volatility, timeStep)[0];
-		downFactor = computeUpDownFactors(riskFreeRate, volatility, timeStep)[1];
 		riskFreeFactor = Math.exp(riskFreeRate*timeStep)-1;//it is rho_n
-		
-		//risk neutral probabilities 
-		riskNeutralProbabilityUp = (1 + riskFreeFactor - downFactor) / (upFactor - downFactor);
-		riskNeutralProbabilityDown = 1 - riskNeutralProbabilityUp;
 	}
 	
 	
@@ -88,30 +78,37 @@ public abstract class BinomialModel {
 	public BinomialModel(double initialPrice, double riskFreeRate, double volatility, 
 			double lastTime, int numberOfTimes) {
 		this.initialPrice = initialPrice;
+		this.volatility = volatility;
+		this.riskFreeRate = riskFreeRate;
+		
 		this.numberOfTimes = numberOfTimes;
 		timeStep = lastTime/(numberOfTimes-1);//the time step comes from the number of times
+		riskFreeFactor = Math.exp(riskFreeRate*timeStep)-1;//it is rho_n
+	}
+	
+	protected abstract double[] computeUpDownFactors(double riskFreeRate, double volatility, double timeStep);
+
+	/*
+	 * This method generates upFactor, downFactor (according to the specific model), and once this is done
+	 * riskNeutralProbabilityUp and riskNeutralProbabilityDown. It gets called (only once) at the beginning of
+	 * either generateValues() or generateValuesProbabilities(). 
+	 */
+	private void generateParameters() {
 		/*
 		 * Important: u_n and d_n are computed in a specific way according to the specific model. The specific model
 		 * will be represented by a class inheriting from this one. In general, we assume they can be function of r,
 		 * sigma and Delta_n=T/n. In cases when they depend on more parameters, these parameters will be given in the
 		 * constructors of those classes, see for example LeisenReimerModel.
 		 */
-		
 		double[] upAndDownFactors = computeUpDownFactors(riskFreeRate, volatility, timeStep);
 		
 		upFactor = upAndDownFactors[0];
-		downFactor = upAndDownFactors[1];
-		
-		riskFreeFactor = Math.exp(riskFreeRate*timeStep)-1;//it is rho_n
-		
+		downFactor = upAndDownFactors[1];		
 		
 		//risk neutral probabilities 
 		riskNeutralProbabilityUp = (1 + riskFreeFactor - downFactor) / (upFactor - downFactor);
 		riskNeutralProbabilityDown = 1 - riskNeutralProbabilityUp;
 	}
-	
-	protected abstract double[] computeUpDownFactors(double riskFreeRate, double volatility, double timeStep);
-
 	
 	/*
 	 * This method is private! This is our inner implementation, behind the scenes. We don't want an user of our
@@ -129,6 +126,9 @@ public abstract class BinomialModel {
 	//(S_0u^n S_0u^(n-1)d .... S_0ud^(n-1) S_0d^n)
 	
 	private void generateValues() {
+		if (upFactor ==0.0) {//it means that the method has not been called
+			generateParameters();
+		}
 		values = new double[numberOfTimes][numberOfTimes];
 		values[0][0] = initialPrice;
 		int numberOfDowns;//it will be updated in the for loop
@@ -153,6 +153,9 @@ public abstract class BinomialModel {
 	 * if somebody is directly aware of this method.
 	 */
 	private void generateValuesProbabilities() {
+		if (upFactor ==0.0) {//it means that the method has not been called
+			generateParameters();
+		}
 		valuesProbabilities = new double[numberOfTimes][numberOfTimes];
 		valuesProbabilities[0][0]=1;//the first value is deterministic
 		int numberOfDowns;//it will be updated in the for loop
