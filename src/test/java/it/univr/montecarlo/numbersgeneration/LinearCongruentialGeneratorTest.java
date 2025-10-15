@@ -29,7 +29,6 @@ public class LinearCongruentialGeneratorTest {
 
         System.out.println("First four number of the random sequence, excluded the seed:");
 
-        // Maybe the user is not interested to have all the sequence, but only in the first numbers
         for (int i = 0; i < numberOfPseudoRandomNumbers; i++) {
             System.out.println(firstGenerator.getNextInteger());
         }
@@ -42,8 +41,7 @@ public class LinearCongruentialGeneratorTest {
 
         System.out.println("Simulation of " + numberOfPseudoRandomNumbers + " integers with random seed "
                 + " : " + Arrays.toString(sequenceGeneratedByTheSecondObject));
-
-
+  
 
     }
 }
