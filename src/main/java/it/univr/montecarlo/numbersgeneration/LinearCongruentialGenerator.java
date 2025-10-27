@@ -55,27 +55,6 @@ public class LinearCongruentialGenerator {
         }
     }
     
-    
-//	private void generate() {
-//
-//		// initialization! + 1 because the first one is the seed
-//		randomNumbers = new long[numberOfPseudoRandomNumbers + 1];
-//		long remainderOfMaxValue = Long.MAX_VALUE % modulus;
-//		randomNumbers[0] = seed; // the first entry is the seed: first number of the sequence
-//		for (int indexOfInteger = 0; indexOfInteger < numberOfPseudoRandomNumbers; indexOfInteger++) {
-//			long observedValue = a * randomNumbers[indexOfInteger] + c;
-//			if (observedValue < 0 /* overflow! */) {
-//				// the size of the overflow we got
-//				long valueOverflow = observedValue - Long.MIN_VALUE + 1;
-//
-//				long remainderOverflow = valueOverflow % modulus;
-//				// this is the number to which we apply %
-//				observedValue = remainderOverflow + remainderOfMaxValue;
-//			}
-//			long congruence = observedValue % modulus;
-//			randomNumbers[indexOfInteger + 1] = congruence;
-//		}
-//	}
 
     /**
      * getter method for the sequence of pseudo random natural numbers
