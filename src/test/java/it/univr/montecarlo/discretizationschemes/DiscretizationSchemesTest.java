@@ -1,5 +1,6 @@
 package it.univr.montecarlo.discretizationschemes;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import it.univr.usefulmethodsarrays.UsefulMethodsArrays;
@@ -62,13 +63,15 @@ public class DiscretizationSchemesTest {
 					numberOfSimulatedPathsForLogarithm, seed, timesForLogarithm);
 
 			//We will modify these lines together
-			expectedValuesEulerMaruyama[i] = 0.0; 
-			expectedValuesMilstein[i] = 0.0; 
-			expectedValuesEulerMaruyamaForLogarithm[i] = 0.0; 
+			expectedValuesEulerMaruyama[i] = simulatorEulerMaruyama.getFinalValue().getAverage(); 
+			expectedValuesMilstein[i] = simulatorMilstein.getFinalValue().getAverage(); 
+			expectedValuesEulerMaruyamaForLogarithm[i] = simulatorLogEuler.getFinalValue().getAverage(); 
 		}
 
 		System.out.println("Average Euler Maruyama: = " + UsefulMethodsArrays.getAverage(expectedValuesEulerMaruyama));
 		System.out.println("Average Milstein: = " + UsefulMethodsArrays.getAverage(expectedValuesMilstein));
 		System.out.println("Average Log Euler Maruyama: = " + UsefulMethodsArrays.getAverage(expectedValuesEulerMaruyamaForLogarithm));
+	
+		System.out.println("Realizations: " + Arrays.toString(expectedValuesEulerMaruyama));
 	}
 }
