@@ -21,11 +21,11 @@ public class AmericanOptionTest {
 
 		//model parameters
 		double spotPrice = 1.0;
-		double riskFreeRate = 0.0;
-		double volatility = 0.4;
+		double riskFreeRate = 0.05;
+		double volatility = 0.2;
 		
 		//option parameters
-		double maturity = 3.5;		
+		double maturity = 1.0;		
 		double strike = 1.0;
 		
 		//time discretization parameters

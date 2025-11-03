@@ -57,7 +57,7 @@ public class EuropeanOptionTest {
 		int numberOfPaths = 100000;
 		int numberOfFactors = 1;//one-dimensional
 		
-		double timeStep =0.1;
+		double timeStep = 0.1;
 		int numberOfTimeSteps = (int) (maturity/timeStep);
 		
 		TimeDiscretization  times = new TimeDiscretizationFromArray(0.0, numberOfTimeSteps, timeStep);

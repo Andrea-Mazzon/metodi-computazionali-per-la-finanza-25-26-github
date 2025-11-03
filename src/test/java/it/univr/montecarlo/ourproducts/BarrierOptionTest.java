@@ -32,13 +32,13 @@ public class BarrierOptionTest {
 		
 		//time discretization parameters
 		double initialTime = 0.0;
-		double timeStep = 0.1;
+		double timeStep = 0.01;
 		int numberOfTimeSteps = (int) (maturity/timeStep);
 		
 		TimeDiscretization times = new TimeDiscretizationFromArray(initialTime, numberOfTimeSteps, timeStep);
 		
 		//simulation parameters
-		int numberOfPaths = 10000;
+		int numberOfPaths = 100000;
 		int seed = 1897;
 		
 
