@@ -77,9 +77,9 @@ public class CallAndPutTest {
 		final double[] callOptionValues = returnedValuesForCallOption[1];
 		
 		//calculation of the analytic prices
-		final double[] analyticalCallOptionValues = new double[callOptionValues.length];
-		for (int i =0; i < analyticalCallOptionValues.length; i++) {
-			analyticalCallOptionValues[i] = AnalyticFormulas.blackScholesOptionValue(initialStockPricesForCall[i], riskFreeRate,
+		final double[] analyticCallOptionValues = new double[callOptionValues.length];
+		for (int i =0; i < analyticCallOptionValues.length; i++) {
+			analyticCallOptionValues[i] = AnalyticFormulas.blackScholesOptionValue(initialStockPricesForCall[i], riskFreeRate,
 					volatility, optionMaturity, optionStrike, true);
 		}
 		System.out.println("Initial values for call options:");
@@ -95,8 +95,12 @@ public class CallAndPutTest {
 		Arrays.stream(callOptionValues).forEach(element -> System.out.print(formatterValue.format(element) + " " ));
 		System.out.println();
 		
-		//there causes a failure if |callOptionValues[i]-analyticalCallOptionValues[i]|>tolerance for at least an index i
-		
+		System.out.println();
+		System.out.println("Analytic call option values:");
+		System.out.println();
+		//we use the Stream implementation to print all the elements of an array, stating how many digits after comma we want to print
+		Arrays.stream(analyticCallOptionValues).forEach(element -> System.out.print(formatterValue.format(element) + " " ));
+		System.out.println();
 	}
 	
 	/**
@@ -128,9 +132,9 @@ public class CallAndPutTest {
 		final double[] putOptionValues = returnedValuesForPutOption[1];
 		
 		//calculation of the analytic prices
-		final double[] analyticalPutOptionValues = new double[putOptionValues.length];
-		for (int i =0; i < analyticalPutOptionValues.length; i++) {
-			analyticalPutOptionValues[i] = AnalyticFormulas.blackScholesOptionValue(initialStockPricesForPut[i], riskFreeRate,
+		final double[] analyticPutOptionValues = new double[putOptionValues.length];
+		for (int i =0; i < analyticPutOptionValues.length; i++) {
+			analyticPutOptionValues[i] = AnalyticFormulas.blackScholesOptionValue(initialStockPricesForPut[i], riskFreeRate,
 					volatility, optionMaturity, optionStrike, false);
 		}
 		System.out.println("Initial values for put options:");
@@ -138,12 +142,19 @@ public class CallAndPutTest {
 		//we use the Stream implementation to print all the elements of an array, stating how many digits after comma we want to print
 		Arrays.stream(initialStockPricesForPut).forEach(element -> System.out.print(formatterValue.format(element) + " " ));
 		System.out.println();
-		
+		System.out.println();
 		System.out.println("Put option values:");
 		System.out.println();
 		
 		//we use the Stream implementation to print all the elements of an array, stating how many digits after comma we want to print
-		Arrays.stream(putOptionValues).forEach(element -> System.out.print(formatterValue.format(element) + " " ));		
+		Arrays.stream(putOptionValues).forEach(element -> System.out.print(formatterValue.format(element) + " " ));	
+		System.out.println();
+		System.out.println();
+		System.out.println("Analytic put option values:");
+		System.out.println();
+		
+		//we use the Stream implementation to print all the elements of an array, stating how many digits after comma we want to print
+		Arrays.stream(analyticPutOptionValues).forEach(element -> System.out.print(formatterValue.format(element) + " " ));	
 	}
 	
 	public static void main(String[] strings) throws Exception {
