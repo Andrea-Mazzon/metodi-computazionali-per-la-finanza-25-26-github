@@ -88,7 +88,7 @@ public class AsianOptionWithBSControlVariate extends AbstractAssetMonteCarloProd
 	}
 
 
-	// Computing the mean of Call/Put options
+	// Computing the mean of Call options
 	private double computeAnalyticValue(double initialValue,	double riskFreeRate, double volatility, double evaluationTime) {
 
 		int numberOfTimes = timesForAveraging.getNumberOfTimes();

@@ -24,8 +24,8 @@ public class AmericanOptionTest {
 
 		//model parameters
 		double spotPrice = 1.0;
-		double riskFreeRate = 0.0;
-		double volatility = 0.7;
+		double riskFreeRate = 0.06;
+		double volatility = 0.2;
 
 		//option parameters
 		double strike = 1.0;
