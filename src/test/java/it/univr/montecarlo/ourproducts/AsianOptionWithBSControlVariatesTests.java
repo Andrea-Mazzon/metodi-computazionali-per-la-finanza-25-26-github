@@ -58,9 +58,9 @@ public class AsianOptionWithBSControlVariatesTests {
 		System.out.println("Expected value of asian option with control variate: " + asianOptionWithCVPayoff.getAverage());
 		System.out.println();
 		
-		//these are the standard errors
-		System.out.println("Standard error of Asian option: " + asianOptionPayoff.getStandardDeviation());
-		System.out.println("Standard error of Asian option with control variate: " + asianOptionWithCVPayoff.getStandardDeviation());
+		//these are the standard deviations
+		System.out.println("Standard deviation of Asian option: " + asianOptionPayoff.getStandardDeviation());
+		System.out.println("Standard deviation of Asian option with control variate: " + asianOptionWithCVPayoff.getStandardDeviation());
 		System.out.println("Ratio: " + asianOptionPayoff.getStandardDeviation() / asianOptionWithCVPayoff.getStandardDeviation());
 
 	}			
